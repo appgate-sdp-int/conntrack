@@ -100,9 +100,10 @@ func (c *Conn) eventWorker(workerID uint8, evChan chan<- Event, errChan chan<- e
 	var recv []netlink.Message
 	var ev Event
 
+	var b []byte = make([]byte, 64*1024*1024)
 	for {
 		// Receive data from the Netlink socket
-		recv, err = c.conn.Receive()
+		recv, err = c.conn.ReceiveUsing(b)
 		if err != nil {
 			errChan <- errors.Wrap(err, fmt.Sprintf(errWorkerReceive, workerID))
 			return
